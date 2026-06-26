@@ -3,8 +3,14 @@ import SwiftUI
 
 @MainActor
 final class DashboardWindowController: NSWindowController, NSWindowDelegate {
-    init(store: UsageStore) {
-        let hostingController = NSHostingController(rootView: AIDashboardView(store: store))
+    init(
+        store: UsageStore,
+        onActivateAccount: @escaping (UsageProvider, Int) -> Void)
+    {
+        let hostingController = NSHostingController(
+            rootView: AIDashboardView(
+                store: store,
+                onActivateAccount: onActivateAccount))
         let window = NSWindow(contentViewController: hostingController)
         window.title = "AI Usage Dashboard"
         window.setContentSize(NSSize(width: 1180, height: 760))

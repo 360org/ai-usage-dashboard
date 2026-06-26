@@ -5,6 +5,8 @@ import SwiftUI
 struct AIDashboardView: View {
     @Bindable var store: UsageStore
     @State private var selectedProvider: UsageProvider?
+    @State private var selectedAccountID: String?
+    let onActivateAccount: (UsageProvider, Int) -> Void
 
     private var model: AIDashboardModel {
         AIDashboardModel.make(store: self.store)
@@ -23,7 +25,9 @@ struct AIDashboardView: View {
         NavigationSplitView {
             DashboardSidebar(
                 model: self.model,
-                selectedProvider: self.$selectedProvider)
+                selectedProvider: self.$selectedProvider,
+                selectedAccountID: self.$selectedAccountID,
+                onActivateAccount: self.onActivateAccount)
         } detail: {
             if let vendor = self.selectedVendor {
                 DashboardDetail(vendor: vendor)
@@ -38,6 +42,9 @@ struct AIDashboardView: View {
             if self.selectedProvider == nil {
                 self.selectedProvider = self.model.vendors.first?.id
             }
+            if self.selectedAccountID == nil {
+                self.selectedAccountID = self.model.vendors.first?.accounts.first?.id
+            }
         }
     }
 }
@@ -46,6 +53,8 @@ struct AIDashboardView: View {
 private struct DashboardSidebar: View {
     let model: AIDashboardModel
     @Binding var selectedProvider: UsageProvider?
+    @Binding var selectedAccountID: String?
+    let onActivateAccount: (UsageProvider, Int) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -64,7 +73,10 @@ private struct DashboardSidebar: View {
 
             List(selection: self.$selectedProvider) {
                 ForEach(self.model.vendors) { vendor in
-                    DashboardVendorRow(vendor: vendor)
+                    DashboardVendorRow(
+                        vendor: vendor,
+                        selectedAccountID: self.$selectedAccountID,
+                        onActivateAccount: self.onActivateAccount)
                         .tag(vendor.id as UsageProvider?)
                 }
             }
@@ -117,29 +129,74 @@ private struct DashboardMetric: View {
 
 private struct DashboardVendorRow: View {
     let vendor: AIDashboardModel.Vendor
+    @Binding var selectedAccountID: String?
+    let onActivateAccount: (UsageProvider, Int) -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
-            Circle()
-                .fill(self.vendor.brandSwiftUIColor)
-                .frame(width: 10, height: 10)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(self.vendor.name)
-                    .font(.body.weight(.medium))
-                Text(self.vendor.accountNames.prefix(2).joined(separator: " · "))
-                    .font(.caption)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Circle()
+                    .fill(self.vendor.brandSwiftUIColor)
+                    .frame(width: 10, height: 10)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(self.vendor.name)
+                        .font(.body.weight(.medium))
+                    Text("\(self.vendor.accounts.count) accounts")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 4)
+                Text("\(self.vendor.accounts.count)")
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
             }
-            Spacer(minLength: 4)
-            Text("\(self.vendor.windows.count)")
-                .font(.caption.weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
+            FlowAccountChips(
+                vendor: self.vendor,
+                selectedAccountID: self.$selectedAccountID,
+                onActivateAccount: self.onActivateAccount)
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
+    }
+}
+
+private struct FlowAccountChips: View {
+    let vendor: AIDashboardModel.Vendor
+    @Binding var selectedAccountID: String?
+    let onActivateAccount: (UsageProvider, Int) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(Array(self.vendor.accounts.enumerated()), id: \.element.id) { index, account in
+                    Button {
+                        self.selectedAccountID = account.id
+                        self.onActivateAccount(self.vendor.id, index)
+                    } label: {
+                        HStack(spacing: 5) {
+                            if account.isActive {
+                                Image(systemName: "checkmark.circle.fill")
+                            }
+                            Text(account.label)
+                                .lineLimit(1)
+                        }
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(account.isActive ? .white : .primary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(
+                            account.isActive ? self.vendor.brandSwiftUIColor : Color(nsColor: .controlBackgroundColor),
+                            in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .help(account.detail ?? account.label)
+                    .accessibilityLabel(account.label)
+                }
+            }
+        }
     }
 }
 
@@ -194,7 +251,7 @@ private struct DashboardLimitOverview: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            DashboardHeroMetric(title: "Accounts", value: "\(self.vendor.accountNames.count)")
+            DashboardHeroMetric(title: "Accounts", value: "\(self.vendor.accounts.count)")
             DashboardHeroMetric(title: "Context windows", value: "\(self.count(scope: .context))")
             DashboardHeroMetric(title: "Weekly limits", value: "\(self.count(scope: .weekly))")
             DashboardHeroMetric(title: "Monthly limits", value: "\(self.count(scope: .monthly))")
@@ -231,12 +288,18 @@ private struct DashboardAccountsSection: View {
     var body: some View {
         DashboardSection(title: "Accounts") {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 10)], spacing: 10) {
-                ForEach(Array(self.vendor.accountNames.enumerated()), id: \.offset) { _, account in
+                ForEach(self.vendor.accounts) { account in
                     HStack(spacing: 8) {
-                        Image(systemName: "person.crop.circle")
+                        Image(systemName: account.isActive ? "person.crop.circle.fill" : "person.crop.circle")
                             .foregroundStyle(self.vendor.brandSwiftUIColor)
-                        Text(account)
-                            .lineLimit(1)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(account.label)
+                            if let detail = account.detail {
+                                Text(detail)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                         Spacer(minLength: 0)
                     }
                     .padding(10)

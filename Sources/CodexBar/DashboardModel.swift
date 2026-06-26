@@ -17,11 +17,18 @@ struct AIDashboardModel: Equatable {
         let sourceLabel: String
         let statusLabel: String
         let statusTone: Tone
-        let accountNames: [String]
+        let accounts: [Account]
         let windows: [LimitWindow]
         let updatedAt: Date?
         let error: String?
         let brandColor: ProviderColor
+    }
+
+    struct Account: Equatable, Identifiable {
+        let id: String
+        let label: String
+        let detail: String?
+        let isActive: Bool
     }
 
     struct LimitWindow: Equatable, Identifiable {
@@ -62,13 +69,11 @@ struct AIDashboardModel: Equatable {
     let vendors: [Vendor]
 
     static func make(store: UsageStore, now: Date = Date()) -> AIDashboardModel {
-        let providers = store.enabledProvidersForDisplay().filter {
-            store.isEnabled($0) || store.snapshot(for: $0) != nil
-        }
+        let providers = Self.providers(store: store)
         let vendors = providers.map { provider in
             Self.vendor(provider: provider, store: store, now: now)
         }
-        let accountCount = Set(vendors.flatMap(\.accountNames)).count
+        let accountCount = vendors.reduce(0) { $0 + $1.accounts.count }
         let modelLimitCount = vendors.reduce(0) { $0 + $1.windows.count }
         let constrainedWindowCount = vendors.reduce(0) { count, vendor in
             count + vendor.windows.filter(\.isConstrained).count
@@ -80,6 +85,18 @@ struct AIDashboardModel: Equatable {
                 modelLimitCount: modelLimitCount,
                 constrainedWindowCount: constrainedWindowCount),
             vendors: vendors)
+    }
+
+    private static func providers(store: UsageStore) -> [UsageProvider] {
+        let settingsProviders = store.settings.tokenAccountsByProvider.keys
+        let snapshottedProviders = store.enabledProvidersForDisplay().filter {
+            store.isEnabled($0) || store.snapshot(for: $0) != nil
+        }
+        let combined = Array(Set(settingsProviders).union(snapshottedProviders))
+        return combined.sorted {
+            store.metadata(for: $0).displayName.localizedCaseInsensitiveCompare(store.metadata(for: $1).displayName)
+                == .orderedAscending
+        }
     }
 
     private static func vendor(provider: UsageProvider, store: UsageStore, now: Date) -> Vendor {
@@ -99,7 +116,7 @@ struct AIDashboardModel: Equatable {
             sourceLabel: store.sourceLabel(for: provider),
             statusLabel: status?.indicator.label ?? (error == nil ? L("Ready") : L("Needs attention")),
             statusTone: Self.tone(status: status?.indicator, error: error, windows: windows),
-            accountNames: Self.accountNames(provider: provider, store: store, snapshot: snapshot),
+            accounts: Self.accounts(provider: provider, store: store, snapshot: snapshot),
             windows: windows,
             updatedAt: snapshot?.updatedAt,
             error: error,
@@ -157,34 +174,86 @@ struct AIDashboardModel: Equatable {
         return .other
     }
 
-    private static func accountNames(
+    private static func accounts(
         provider: UsageProvider,
         store: UsageStore,
         snapshot: UsageSnapshot?)
-        -> [String]
+        -> [Account]
     {
-        var names: [String] = []
-        if let identity = snapshot?.identity(for: provider) {
-            if let email = identity.accountEmail, !email.isEmpty {
-                names.append(email)
-            }
-            if let organization = identity.accountOrganization, !organization.isEmpty {
-                names.append(organization)
+        let data = store.settings.tokenAccountsData(for: provider)
+        if let data {
+            let activeIndex = data.clampedActiveIndex()
+            return data.accounts.enumerated().map { index, account in
+                let isActive = index == activeIndex
+                return Account(
+                    id: account.id.uuidString,
+                    label: account.displayName,
+                    detail: Self.accountDetail(for: account, provider: provider, snapshot: snapshot),
+                    isActive: isActive)
             }
         }
-        for account in store.accountSnapshots[provider] ?? [] {
-            names.append(account.account.displayName)
+
+        var accounts: [Account] = []
+        if let identity = snapshot?.identity(for: provider) {
+            if let email = identity.accountEmail, !email.isEmpty {
+                accounts.append(
+                    Account(
+                        id: "\(provider.rawValue)-identity-email",
+                        label: email,
+                        detail: identity.accountOrganization,
+                        isActive: true))
+            }
+            if let organization = identity.accountOrganization, !organization.isEmpty,
+               organization != identity.accountEmail
+            {
+                accounts.append(
+                    Account(
+                        id: "\(provider.rawValue)-identity-org",
+                        label: organization,
+                        detail: nil,
+                        isActive: true))
+            }
         }
         if provider == .codex {
             for account in store.codexAccountSnapshots {
-                names.append(account.account.menuDisplayName)
+                accounts.append(
+                    Account(
+                        id: account.id,
+                        label: account.account.menuDisplayName,
+                        detail: account.sourceLabel,
+                        isActive: true))
             }
         }
-        if names.isEmpty {
-            return [L("Default account")]
+        if accounts.isEmpty {
+            return [Account(
+                id: "\(provider.rawValue)-default",
+                label: L("Default account"),
+                detail: nil,
+                isActive: true)]
         }
         var seen = Set<String>()
-        return names.filter { seen.insert($0).inserted }
+        return accounts.filter { seen.insert($0.label).inserted }
+    }
+
+    private static func accountDetail(
+        for account: ProviderTokenAccount,
+        provider: UsageProvider,
+        snapshot: UsageSnapshot?)
+        -> String?
+    {
+        if let scope = account.sanitizedUsageScope {
+            return scope
+        }
+        if let organization = account.sanitizedOrganizationID {
+            return organization
+        }
+        if let workspace = account.sanitizedWorkspaceID {
+            return workspace
+        }
+        if let identity = snapshot?.identity(for: provider), let email = identity.accountEmail, email == account.label {
+            return identity.accountOrganization
+        }
+        return nil
     }
 
     private static func tone(status: ProviderStatusIndicator?, error: String?, windows: [LimitWindow]) -> Tone {

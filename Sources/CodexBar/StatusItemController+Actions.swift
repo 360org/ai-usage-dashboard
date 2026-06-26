@@ -233,7 +233,17 @@ extension StatusItemController: StatusItemMenuPersistentActionDelegate {
     }
 
     @objc func openDashboard() {
-        let controller = self.dashboardWindow ?? DashboardWindowController(store: self.store)
+        let controller = self.dashboardWindow ?? DashboardWindowController(
+            store: self.store)
+        { [weak self] provider, index in
+            guard let self else { return }
+            self.settings.setActiveTokenAccountIndex(index, for: provider)
+            Task {
+                await ProviderInteractionContext.$current.withValue(.userInitiated) {
+                    await self.store.refreshProvider(provider)
+                }
+            }
+        }
         self.dashboardWindow = controller
         controller.show()
     }
