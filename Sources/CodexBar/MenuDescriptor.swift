@@ -630,9 +630,7 @@ struct MenuDescriptor {
                 .appendActionMenuEntries(context: actionContext, entries: &entries)
         }
 
-        if metadata?.dashboardURL != nil {
-            entries.append(.action(L("Usage Dashboard"), .dashboard))
-        }
+        entries.append(.action("AI Dashboard", .dashboard))
         if metadata?.statusPageURL != nil || metadata?.statusLinkURL != nil {
             entries.append(.action(L("Status Page"), .statusPage))
         }
@@ -655,7 +653,7 @@ struct MenuDescriptor {
         entries.append(contentsOf: [
             .action(L("Refresh"), .refresh),
             .action(L("Settings..."), .settings),
-            .action(L("About CodexBar"), .about),
+            .action("About AI Usage Dashboard", .about),
             .action(L("Quit"), .quit),
         ])
         return Section(entries: entries)

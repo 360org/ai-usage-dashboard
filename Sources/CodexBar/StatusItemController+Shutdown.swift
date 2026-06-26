@@ -17,6 +17,8 @@ extension StatusItemController {
         self.cancelShutdownTasks()
         self.clearShutdownMenuState()
         self.removeShutdownStatusItems()
+        self.dashboardWindow?.close()
+        self.dashboardWindow = nil
         self.creditsPurchaseWindow?.close()
         self.creditsPurchaseWindow = nil
     }

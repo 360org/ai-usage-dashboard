@@ -233,12 +233,9 @@ extension StatusItemController: StatusItemMenuPersistentActionDelegate {
     }
 
     @objc func openDashboard() {
-        let preferred = self.lastMenuProvider
-            ?? (self.store.isEnabled(.codex) ? .codex : self.store.enabledProviders().first)
-
-        let provider = preferred ?? .codex
-        guard let url = self.dashboardURL(for: provider) else { return }
-        NSWorkspace.shared.open(url)
+        let controller = self.dashboardWindow ?? DashboardWindowController(store: self.store)
+        self.dashboardWindow = controller
+        controller.show()
     }
 
     func dashboardURL(

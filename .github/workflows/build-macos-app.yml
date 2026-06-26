@@ -1,0 +1,51 @@
+name: Build macOS App
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-app:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Select Xcode 26.1.1 if available
+        run: |
+          set -euo pipefail
+          for candidate in /Applications/Xcode_26.1.1.app /Applications/Xcode_26.1.app /Applications/Xcode.app; do
+            if [[ -d "$candidate" ]]; then
+              sudo xcode-select -s "${candidate}/Contents/Developer"
+              echo "DEVELOPER_DIR=${candidate}/Contents/Developer" >> "$GITHUB_ENV"
+              break
+            fi
+          done
+          xcodebuild -version
+          swift --version
+
+      - name: Lint changed app sources
+        run: ./Scripts/lint.sh lint-macos
+
+      - name: Package adhoc app
+        env:
+          CODEXBAR_SIGNING: adhoc
+          ARCHES: "arm64 x86_64"
+        run: ./Scripts/package_app.sh release
+
+      - name: Archive app bundle
+        run: |
+          set -euo pipefail
+          ditto -c -k --keepParent "AI Usage Dashboard.app" ai-usage-dashboard-macos.zip
+          shasum -a 256 ai-usage-dashboard-macos.zip > ai-usage-dashboard-macos.zip.sha256
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: ai-usage-dashboard-macos
+          path: |
+            ai-usage-dashboard-macos.zip
+            ai-usage-dashboard-macos.zip.sha256
+          if-no-files-found: error

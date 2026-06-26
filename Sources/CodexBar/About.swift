@@ -45,7 +45,7 @@ func showAbout() {
     }
 
     let options: [NSApplication.AboutPanelOptionKey: Any] = [
-        .applicationName: "CodexBar",
+        .applicationName: "AI Usage Dashboard",
         .applicationVersion: versionString,
         .version: versionString,
         .credits: credits,
