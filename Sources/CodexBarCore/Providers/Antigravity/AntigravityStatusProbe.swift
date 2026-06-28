@@ -112,11 +112,12 @@ public struct AntigravityStatusSnapshot: Sendable {
 
     init(
         quotaSummary: AntigravityQuotaSummary,
+        modelQuotas: [AntigravityModelQuota] = [],
         accountEmail: String?,
         accountPlan: String?,
         source: AntigravityModelQuotaSource = .local)
     {
-        self.modelQuotas = []
+        self.modelQuotas = modelQuotas
         self.accountEmail = accountEmail
         self.accountPlan = accountPlan
         self.source = source
@@ -125,10 +126,20 @@ public struct AntigravityStatusSnapshot: Sendable {
 
     public func toUsageSnapshot() throws -> UsageSnapshot {
         if let quotaSummary {
-            return try Self.usageSnapshot(
+            let usage = try Self.usageSnapshot(
                 from: quotaSummary,
                 accountEmail: self.accountEmail,
                 accountPlan: self.accountPlan)
+            guard !self.modelQuotas.isEmpty else {
+                return usage
+            }
+
+            let detailWindows = Self.modelDetailWindows(from: self.modelQuotas)
+            guard !detailWindows.isEmpty else {
+                return usage
+            }
+            let mergedWindows = (usage.extraRateWindows ?? []) + detailWindows
+            return usage.with(extraRateWindows: mergedWindows)
         }
 
         guard !self.modelQuotas.isEmpty else {
@@ -186,6 +197,7 @@ public struct AntigravityStatusSnapshot: Sendable {
         if let quotaSummary {
             return AntigravityStatusSnapshot(
                 quotaSummary: quotaSummary,
+                modelQuotas: snapshot.modelQuotas.isEmpty ? self.modelQuotas : snapshot.modelQuotas,
                 accountEmail: accountEmail,
                 accountPlan: accountPlan,
                 source: self.source)
@@ -226,6 +238,17 @@ public struct AntigravityStatusSnapshot: Sendable {
             extraRateWindows: namedWindows,
             updatedAt: Date(),
             identity: identity)
+    }
+
+    private static func modelDetailWindows(from modelQuotas: [AntigravityModelQuota]) -> [NamedRateWindow] {
+        let normalized = Self.normalizedModels(modelQuotas)
+        return normalized.sorted(by: Self.modelOrderPrecedes).map { model in
+            NamedRateWindow(
+                id: model.quota.modelId,
+                title: Self.quotaDisplayLabel(model.quota),
+                window: Self.rateWindow(for: model.quota),
+                usageKnown: model.quota.remainingFraction != nil)
+        }
     }
 
     private static func quotaSummaryRepresentative(

@@ -142,6 +142,39 @@ struct AntigravityQuotaSummaryTests {
     }
 
     @Test
+    func `fetch snapshot preserves model detail rows when quota summary succeeds`() async throws {
+        let endpoint = AntigravityStatusProbe.AntigravityConnectionEndpoint(
+            scheme: "https",
+            port: 64440,
+            csrfToken: "token",
+            source: .languageServer)
+
+        let snapshot = try await AntigravityStatusProbe.fetchSnapshot(
+            context: AntigravityStatusProbe.RequestContext(endpoints: [endpoint], timeout: 1),
+            send: { payload, _, _ in
+                if payload.path.contains("GetUserStatus") {
+                    return Data(antigravityMultiModelUserStatusJSON().utf8)
+                }
+                return Data(antigravityQuotaSummaryJSON().utf8)
+            })
+
+        let usage = try snapshot.toUsageSnapshot()
+
+        #expect(snapshot.modelQuotas.map(\.modelId).sorted() == [
+            "claude-sonnet-4",
+            "gemini-3-flash",
+            "gemini-3-flash-lite",
+            "gemini-3-pro-low",
+        ].sorted())
+        #expect(usage.extraRateWindows?.count == 8)
+        #expect(usage.extraRateWindows?.map(\.id).contains("gemini-3-pro-low") == true)
+        #expect(usage.extraRateWindows?.map(\.id).contains("claude-sonnet-4") == true)
+        #expect(usage.extraRateWindows?.map(\.title).contains("Gemini 3 Pro Low") == true)
+        #expect(usage.extraRateWindows?.map(\.title).contains("Claude Sonnet 4") == true)
+        #expect(usage.identity?.accountEmail == "test@example.com")
+    }
+
+    @Test
     func `fetch snapshot falls back to user status when quota summary is unavailable`() async throws {
         let endpoint = AntigravityStatusProbe.AntigravityConnectionEndpoint(
             scheme: "https",
@@ -376,6 +409,46 @@ private func antigravityCommandModelConfigJSON() -> String {
           "quotaInfo": { "remainingFraction": 0.9, "resetTime": "2025-12-24T10:00:00Z" }
         }
       ]
+    }
+    """
+}
+
+private func antigravityMultiModelUserStatusJSON() -> String {
+    """
+    {
+      "code": 0,
+      "userStatus": {
+        "email": "test@example.com",
+        "planStatus": {
+          "planInfo": {
+            "planName": "Pro"
+          }
+        },
+        "cascadeModelConfigData": {
+          "clientModelConfigs": [
+            {
+              "label": "Claude Sonnet 4",
+              "modelOrAlias": { "model": "claude-sonnet-4" },
+              "quotaInfo": { "remainingFraction": 0.5, "resetTime": "2025-12-24T10:00:00Z" }
+            },
+            {
+              "label": "Gemini 3 Flash",
+              "modelOrAlias": { "model": "gemini-3-flash" },
+              "quotaInfo": { "remainingFraction": 0.2, "resetTime": "2025-12-24T10:00:00Z" }
+            },
+            {
+              "label": "Gemini 3 Flash Lite",
+              "modelOrAlias": { "model": "gemini-3-flash-lite" },
+              "quotaInfo": { "remainingFraction": 0.7, "resetTime": "2025-12-24T10:00:00Z" }
+            },
+            {
+              "label": "Gemini 3 Pro Low",
+              "modelOrAlias": { "model": "gemini-3-pro-low" },
+              "quotaInfo": { "remainingFraction": 0.9, "resetTime": "2025-12-24T10:00:00Z" }
+            }
+          ]
+        }
+      }
     }
     """
 }
