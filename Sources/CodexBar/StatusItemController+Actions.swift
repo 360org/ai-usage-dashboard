@@ -243,6 +243,14 @@ extension StatusItemController: StatusItemMenuPersistentActionDelegate {
                         await self.store.refreshProvider(provider)
                     }
                 }
+            },
+            onRefreshVendor: { [weak self] provider in
+                guard let self else { return }
+                Task {
+                    await ProviderInteractionContext.$current.withValue(.userInitiated) {
+                        await self.store.refreshProvider(provider)
+                    }
+                }
             })
         self.dashboardWindow = controller
         controller.show()

@@ -7,6 +7,7 @@ struct AIDashboardView: View {
     @State private var selectedProvider: UsageProvider?
     @State private var selectedAccountID: String?
     let onActivateAccount: (UsageProvider, Int) -> Void
+    let onRefreshVendor: (UsageProvider) -> Void
 
     private var model: AIDashboardModel {
         AIDashboardModel.make(store: self.store)
@@ -38,7 +39,11 @@ struct AIDashboardView: View {
                 onActivateAccount: self.onActivateAccount)
         } detail: {
             if let vendor = self.selectedVendor {
-                DashboardDetail(vendor: vendor, selectedAccount: self.selectedAccount)
+                DashboardDetail(
+                    vendor: vendor,
+                    selectedAccount: self.selectedAccount,
+                    isRefreshing: self.store.refreshingProviders.contains(vendor.id),
+                    onRefreshVendor: self.onRefreshVendor)
             } else {
                 DashboardEmptyState()
             }
@@ -147,7 +152,9 @@ private struct DashboardVendorGroup: View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
                 self.selectedProvider = self.vendor.id
-                if self.selectedAccountID == nil {
+                if self.selectedAccountID == nil || self.vendor.accounts
+                    .first(where: { $0.id == self.selectedAccountID }) == nil
+                {
                     self.selectedAccountID = self.vendor.accounts.first?.id
                 }
             } label: {
@@ -245,6 +252,8 @@ private struct DashboardAccountRow: View {
 private struct DashboardDetail: View {
     let vendor: AIDashboardModel.Vendor
     let selectedAccount: AIDashboardModel.Account?
+    let isRefreshing: Bool
+    let onRefreshVendor: (UsageProvider) -> Void
 
     var body: some View {
         ScrollView {
@@ -286,7 +295,23 @@ private struct DashboardDetail: View {
                 }
             }
             Spacer()
-            DashboardStatusPill(tone: self.vendor.statusTone, text: self.vendor.statusLabel)
+            HStack(spacing: 10) {
+                Button {
+                    self.onRefreshVendor(self.vendor.id)
+                } label: {
+                    Image(systemName: self.isRefreshing ? "arrow.clockwise.circle.fill" : "arrow.clockwise")
+                        .font(.body.weight(.semibold))
+                        .symbolEffect(.spin, options: .repeating, value: self.isRefreshing)
+                        .frame(width: 18, height: 18)
+                        .accessibilityHidden(true)
+                }
+                .buttonStyle(.plain)
+                .disabled(self.isRefreshing)
+                .help(self.isRefreshing ? "Refreshing..." : "Refresh")
+                .accessibilityLabel(self.isRefreshing ? "Refreshing vendor data" : "Refresh vendor data")
+
+                DashboardStatusPill(tone: self.vendor.statusTone, text: self.vendor.statusLabel)
+            }
         }
         .accessibilityElement(children: .combine)
     }
@@ -333,6 +358,11 @@ private struct DashboardLimitsSection: View {
 
     var body: some View {
         DashboardSection(title: "Limits") {
+            if !self.vendor.windows.isEmpty {
+                Text("\(self.vendor.windows.count) quotas")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             if self.vendor.windows.isEmpty {
                 DashboardInlineEmptyState(text: self.vendor.error ?? "No limits have been loaded for this vendor yet.")
             } else {
@@ -381,6 +411,13 @@ private struct DashboardLimitRow: View {
         max(0, min(1, self.window.usedPercent / 100))
     }
 
+    private var usageText: String {
+        guard self.window.usageKnown else {
+            return "Usage unknown"
+        }
+        return "\(Int(self.window.usedPercent.rounded()))% used / \(Int(self.window.remainingPercent.rounded()))% left"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline) {
@@ -410,6 +447,10 @@ private struct DashboardLimitRow: View {
                 }
             }
 
+            Text(self.usageText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
                     Capsule().fill(.quaternary)
@@ -419,7 +460,7 @@ private struct DashboardLimitRow: View {
                 }
             }
             .frame(height: 8)
-            .accessibilityLabel("\(self.window.title), \(Int(self.window.usedPercent.rounded())) percent used")
+            .accessibilityLabel("\(self.window.title), \(self.usageText)")
         }
         .padding(14)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
