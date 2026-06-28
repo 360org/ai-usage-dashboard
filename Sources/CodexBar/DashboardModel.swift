@@ -194,25 +194,8 @@ struct AIDashboardModel: Equatable {
         }
 
         var accounts: [Account] = []
-        if let identity = snapshot?.identity(for: provider) {
-            if let email = identity.accountEmail, !email.isEmpty {
-                accounts.append(
-                    Account(
-                        id: "\(provider.rawValue)-identity-email",
-                        label: email,
-                        detail: identity.accountOrganization,
-                        isActive: true))
-            }
-            if let organization = identity.accountOrganization, !organization.isEmpty,
-               organization != identity.accountEmail
-            {
-                accounts.append(
-                    Account(
-                        id: "\(provider.rawValue)-identity-org",
-                        label: organization,
-                        detail: nil,
-                        isActive: true))
-            }
+        if let identityAccount = Self.identityAccount(provider: provider, snapshot: snapshot) {
+            accounts.append(identityAccount)
         }
         if provider == .codex {
             for account in store.codexAccountSnapshots {
@@ -233,6 +216,33 @@ struct AIDashboardModel: Equatable {
         }
         var seen = Set<String>()
         return accounts.filter { seen.insert($0.label).inserted }
+    }
+
+    private static func identityAccount(provider: UsageProvider, snapshot: UsageSnapshot?) -> Account? {
+        guard let identity = snapshot?.identity(for: provider) else { return nil }
+
+        let email = identity.accountEmail?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let organization = identity.accountOrganization?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let loginMethod = identity.loginMethod?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if let email, !email.isEmpty {
+            let detail = organization?.isEmpty == false && organization != email ? organization : loginMethod
+            return Account(
+                id: "\(provider.rawValue)-identity",
+                label: email,
+                detail: detail,
+                isActive: true)
+        }
+
+        if let organization, !organization.isEmpty {
+            return Account(
+                id: "\(provider.rawValue)-identity",
+                label: organization,
+                detail: loginMethod,
+                isActive: true)
+        }
+
+        return nil
     }
 
     private static func accountDetail(
