@@ -301,7 +301,6 @@ private struct DashboardDetail: View {
                 } label: {
                     Image(systemName: self.isRefreshing ? "arrow.clockwise.circle.fill" : "arrow.clockwise")
                         .font(.body.weight(.semibold))
-                        .symbolEffect(.spin, options: .repeating, value: self.isRefreshing)
                         .frame(width: 18, height: 18)
                         .accessibilityHidden(true)
                 }
