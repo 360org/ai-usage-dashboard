@@ -21,6 +21,14 @@ struct AIDashboardView: View {
         return vendors.first
     }
 
+    private var selectedAccount: AIDashboardModel.Account? {
+        guard let vendor = self.selectedVendor else { return nil }
+        if let selectedAccountID, let account = vendor.accounts.first(where: { $0.id == selectedAccountID }) {
+            return account
+        }
+        return vendor.accounts.first
+    }
+
     var body: some View {
         NavigationSplitView {
             DashboardSidebar(
@@ -30,7 +38,7 @@ struct AIDashboardView: View {
                 onActivateAccount: self.onActivateAccount)
         } detail: {
             if let vendor = self.selectedVendor {
-                DashboardDetail(vendor: vendor)
+                DashboardDetail(vendor: vendor, selectedAccount: self.selectedAccount)
             } else {
                 DashboardEmptyState()
             }
@@ -236,13 +244,13 @@ private struct DashboardAccountRow: View {
 @MainActor
 private struct DashboardDetail: View {
     let vendor: AIDashboardModel.Vendor
+    let selectedAccount: AIDashboardModel.Account?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 self.header
                 DashboardLimitOverview(vendor: self.vendor)
-                DashboardAccountsSection(vendor: self.vendor)
                 DashboardLimitsSection(vendor: self.vendor)
             }
             .padding(24)
@@ -271,6 +279,11 @@ private struct DashboardDetail: View {
                 Text(self.vendor.sourceLabel)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                if let selectedAccount = self.selectedAccount {
+                    DashboardSelectedAccountBadge(
+                        vendor: self.vendor,
+                        account: selectedAccount)
+                }
             }
             Spacer()
             DashboardStatusPill(tone: self.vendor.statusTone, text: self.vendor.statusLabel)
@@ -315,35 +328,6 @@ private struct DashboardHeroMetric: View {
     }
 }
 
-private struct DashboardAccountsSection: View {
-    let vendor: AIDashboardModel.Vendor
-
-    var body: some View {
-        DashboardSection(title: "Accounts") {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 10)], spacing: 10) {
-                ForEach(self.vendor.accounts) { account in
-                    HStack(spacing: 8) {
-                        Image(systemName: account.isActive ? "person.crop.circle.fill" : "person.crop.circle")
-                            .foregroundStyle(self.vendor.brandSwiftUIColor)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(account.label)
-                            if let detail = account.detail {
-                                Text(detail)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        Spacer(minLength: 0)
-                    }
-                    .padding(10)
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .accessibilityElement(children: .combine)
-                }
-            }
-        }
-    }
-}
-
 private struct DashboardLimitsSection: View {
     let vendor: AIDashboardModel.Vendor
 
@@ -359,6 +343,33 @@ private struct DashboardLimitsSection: View {
                 }
             }
         }
+    }
+}
+
+private struct DashboardSelectedAccountBadge: View {
+    let vendor: AIDashboardModel.Vendor
+    let account: AIDashboardModel.Account
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "person.crop.circle.fill")
+                .foregroundStyle(self.vendor.brandSwiftUIColor)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(self.account.label)
+                    .font(.subheadline.weight(.medium))
+                if let detail = self.account.detail {
+                    Text(detail)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 }
 
