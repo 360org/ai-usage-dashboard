@@ -71,17 +71,19 @@ private struct DashboardSidebar: View {
             DashboardSummaryGrid(summary: self.model.summary)
                 .padding(.horizontal, 14)
 
-            List(selection: self.$selectedProvider) {
-                ForEach(self.model.vendors) { vendor in
-                    DashboardVendorRow(
-                        vendor: vendor,
-                        selectedAccountID: self.$selectedAccountID,
-                        onActivateAccount: self.onActivateAccount)
-                        .tag(vendor.id as UsageProvider?)
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 12) {
+                    ForEach(self.model.vendors) { vendor in
+                        DashboardVendorGroup(
+                            vendor: vendor,
+                            selectedProvider: self.$selectedProvider,
+                            selectedAccountID: self.$selectedAccountID,
+                            onActivateAccount: self.onActivateAccount)
+                    }
                 }
             }
-            .listStyle(.sidebar)
             .accessibilityLabel("AI vendors")
+            .padding(.horizontal, 10)
         }
         .frame(minWidth: 280)
     }
@@ -127,76 +129,107 @@ private struct DashboardMetric: View {
     }
 }
 
-private struct DashboardVendorRow: View {
+private struct DashboardVendorGroup: View {
     let vendor: AIDashboardModel.Vendor
+    @Binding var selectedProvider: UsageProvider?
     @Binding var selectedAccountID: String?
     let onActivateAccount: (UsageProvider, Int) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                Circle()
-                    .fill(self.vendor.brandSwiftUIColor)
-                    .frame(width: 10, height: 10)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(self.vendor.name)
-                        .font(.body.weight(.medium))
-                    Text("\(self.vendor.accounts.count) accounts")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
+        VStack(alignment: .leading, spacing: 8) {
+            Button {
+                self.selectedProvider = self.vendor.id
+                if self.selectedAccountID == nil {
+                    self.selectedAccountID = self.vendor.accounts.first?.id
                 }
-                Spacer(minLength: 4)
-                Text("\(self.vendor.accounts.count)")
-                    .font(.caption.weight(.semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
+            } label: {
+                HStack(spacing: 10) {
+                    Circle()
+                        .fill(self.vendor.brandSwiftUIColor)
+                        .frame(width: 10, height: 10)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(self.vendor.name)
+                            .font(.body.weight(.medium))
+                            .foregroundStyle(.primary)
+                        Text("\(self.vendor.accounts.count) accounts")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                    Spacer(minLength: 4)
+                    Text("\(self.vendor.accounts.count)")
+                        .font(.caption.weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    self.selectedProvider == self.vendor.id ? self.vendor.brandSwiftUIColor.opacity(0.18) : .clear,
+                    in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
-            FlowAccountChips(
-                vendor: self.vendor,
-                selectedAccountID: self.$selectedAccountID,
-                onActivateAccount: self.onActivateAccount)
+            .buttonStyle(.plain)
+
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(Array(self.vendor.accounts.enumerated()), id: \.element.id) { index, account in
+                    DashboardAccountRow(
+                        vendor: self.vendor,
+                        account: account,
+                        isSelected: self.selectedAccountID == account.id)
+                    {
+                        self.selectedProvider = self.vendor.id
+                        self.selectedAccountID = account.id
+                        self.onActivateAccount(self.vendor.id, index)
+                    }
+                }
+            }
         }
-        .padding(.vertical, 4)
-        .accessibilityElement(children: .combine)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(.quaternary.opacity(0.35)))
     }
 }
 
-private struct FlowAccountChips: View {
+private struct DashboardAccountRow: View {
     let vendor: AIDashboardModel.Vendor
-    @Binding var selectedAccountID: String?
-    let onActivateAccount: (UsageProvider, Int) -> Void
+    let account: AIDashboardModel.Account
+    let isSelected: Bool
+    let action: () -> Void
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(Array(self.vendor.accounts.enumerated()), id: \.element.id) { index, account in
-                    Button {
-                        self.selectedAccountID = account.id
-                        self.onActivateAccount(self.vendor.id, index)
-                    } label: {
-                        HStack(spacing: 5) {
-                            if account.isActive {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                            Text(account.label)
-                                .lineLimit(1)
-                        }
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(account.isActive ? .white : .primary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 5)
-                        .background(
-                            account.isActive ? self.vendor.brandSwiftUIColor : Color(nsColor: .controlBackgroundColor),
-                            in: Capsule())
+        Button(action: self.action) {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: self.isSelected ? "checkmark.circle.fill" : "person.crop.circle")
+                    .foregroundStyle(self.isSelected ? self.vendor.brandSwiftUIColor : .secondary)
+                    .imageScale(.medium)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(self.account.label)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    if let detail = self.account.detail {
+                        Text(detail)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
                     }
-                    .buttonStyle(.plain)
-                    .help(account.detail ?? account.label)
-                    .accessibilityLabel(account.label)
                 }
+                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                self.isSelected ? self.vendor.brandSwiftUIColor.opacity(0.16) : Color.clear,
+                in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
+        .buttonStyle(.plain)
+        .help(self.account.detail ?? self.account.label)
+        .accessibilityLabel(self.account.label)
     }
 }
 
