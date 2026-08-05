@@ -11,4 +11,4 @@
 - [x] T1.6 Tạo CONTEXT.md (Từ điển nghiệp vụ: Adaptive refresh, Merge Icons, v.v.)
 - [ ] T1.7 Rà soát và đồng bộ CHANGELOG.md sang CHANGELOGS.md
 - [x] T1.8 Đổi tên đóng gói ứng dụng sang AI Usage Dashboard
-- [ ] T1.9 Bổ sung Job build macOS app vào GitHub Actions CI
+- [x] T1.9 Bổ sung Job build macOS app vào GitHub Actions CI
