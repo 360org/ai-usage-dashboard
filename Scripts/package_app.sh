@@ -202,8 +202,8 @@ for ARCH in "${ARCH_LIST[@]}"; do
   stage_build_products "$ARCH"
 done
 
-APP_FINAL="$ROOT/CodexBar.app"
-APP_STAGE="$ROOT/.build/package/CodexBar.app"
+APP_FINAL="$ROOT/AI Usage Dashboard.app"
+APP_STAGE="$ROOT/.build/package/AI Usage Dashboard.app"
 rm -rf "$APP_STAGE"
 APP="$APP_STAGE"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Frameworks"
@@ -216,11 +216,11 @@ if [[ -f "$ICON_SOURCE" ]]; then
   iconutil --convert icns --output "$ICON_TARGET" "$ICON_SOURCE"
 fi
 
-BUNDLE_ID="com.steipete.codexbar"
-FEED_URL="https://raw.githubusercontent.com/steipete/CodexBar/main/appcast.xml"
+BUNDLE_ID="com.360org.ai-usage-dashboard"
+FEED_URL="https://raw.githubusercontent.com/360org/ai-usage-dashboard/main/appcast.xml"
 AUTO_CHECKS=true
 if [[ "$LOWER_CONF" == "debug" ]]; then
-  BUNDLE_ID="com.steipete.codexbar.debug"
+  BUNDLE_ID="com.360org.ai-usage-dashboard.debug"
   FEED_URL=""
   AUTO_CHECKS=false
 fi
@@ -230,9 +230,9 @@ if [[ "$SIGNING_MODE" == "adhoc" ]]; then
 fi
 WIDGET_BUNDLE_ID="${BUNDLE_ID}.widget"
 APP_TEAM_ID="${APP_TEAM_ID:-Y5PE65HELJ}"
-APP_GROUP_ID="${APP_TEAM_ID}.com.steipete.codexbar"
+APP_GROUP_ID="${APP_TEAM_ID}.com.360org.ai-usage-dashboard"
 if [[ "$BUNDLE_ID" == *".debug"* ]]; then
-  APP_GROUP_ID="${APP_TEAM_ID}.com.steipete.codexbar.debug"
+  APP_GROUP_ID="${APP_TEAM_ID}.com.360org.ai-usage-dashboard.debug"
 fi
 ENTITLEMENTS_DIR="$ROOT/.build/entitlements"
 APP_ENTITLEMENTS="${ENTITLEMENTS_DIR}/CodexBar.entitlements"
@@ -308,8 +308,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key><string>CodexBar</string>
-    <key>CFBundleDisplayName</key><string>CodexBar</string>
+    <key>CFBundleName</key><string>AI Usage Dashboard</string>
+    <key>CFBundleDisplayName</key><string>AI Usage Dashboard</string>
     <key>CFBundleIdentifier</key><string>${BUNDLE_ID}</string>
     <key>CFBundleExecutable</key><string>CodexBar</string>
     <key>CFBundlePackageType</key><string>APPL</string>
