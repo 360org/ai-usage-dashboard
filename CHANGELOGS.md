@@ -3,6 +3,7 @@
 Theo chuẩn [Keep a Changelog](https://keepachangelog.com/). DevTrack tự append vào mục Unreleased mỗi khi commit.
 
 ## [Unreleased]
+- 2026-08-05 chore(skills): khởi tạo local skill ai-usage-dashboard-skills cho dự án [e9503247]
 - 2026-08-05 fix(ui): sửa lỗi hở top ở chế độ Fullscreen của cửa sổ Preferences T2.1 T2.2 T2.3 [16b4bff1] (T2.1, T2.2, T2.3)
 - 2026-08-05 docs: tạo CONTEXT.md từ điển nghiệp vụ CodexBar T1.6 [8fea8401] (T1.6)
 - 2026-08-05 docs: hoàn thiện DEPLOY_GUIDE.md hướng dẫn build và cài đặt CLI T1.5 [b0855934] (T1.5)
