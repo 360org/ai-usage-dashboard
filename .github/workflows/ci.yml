@@ -538,3 +538,33 @@ jobs:
             printf '| Swift version | `%s` |\n' "$SWIFT_VERSION"
             printf '| Swift toolchain cache hit | `%s` |\n' "${SWIFT_CACHE_HIT:-false}"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  build-macos-app:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Select Xcode
+        run: |
+          for candidate in /Applications/Xcode_26.3.app /Applications/Xcode_26.2.app /Applications/Xcode.app; do
+            if [[ -d "$candidate" ]]; then
+              sudo xcode-select -s "${candidate}/Contents/Developer"
+              break
+            fi
+          done
+          /usr/bin/xcodebuild -version
+
+      - name: Build and Package App
+        run: |
+          ./Scripts/package_app.sh
+
+      - name: Compress App
+        run: |
+          zip -r "AI-Usage-Dashboard.zip" "AI Usage Dashboard.app"
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: AI-Usage-Dashboard
+          path: AI-Usage-Dashboard.zip
