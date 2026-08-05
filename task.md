@@ -3,7 +3,7 @@
 > Mỗi task 1 dòng, có task-id để git hook auto-tick khi commit tham chiếu.
 > Ví dụ: `- [ ] T1.1 Dựng khung dự án`
 
-- [ ] T1.1 Đồng bộ và chuyển đổi VISION.md sang IDEA.md
+- [x] T1.1 Đồng bộ và chuyển đổi VISION.md sang IDEA.md
 - [ ] T1.2 Xây dựng REQUIREMENTS.md (Các yêu cầu tính năng hiện tại của CodexBar)
 - [ ] T1.3 Xây dựng SPEC.md (Đặc tả các nhà cung cấp AI, config, CLI, data models)
 - [ ] T1.4 Xây dựng ARCH.md (Kiến trúc hệ thống và sơ đồ Mermaid của CodexBar)
