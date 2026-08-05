@@ -1,0 +1,10 @@
+{
+  "version": "0.0.1",
+  "skills": [
+    {
+      "name": "ai-usage-dashboard-skills",
+      "description": "Local development and GitLab synchronization skills for AI Usage Dashboard (CodexBar)",
+      "path": "SKILL.md"
+    }
+  ]
+}

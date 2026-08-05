@@ -1,0 +1,5 @@
+{
+  "plugins": [
+    ".claude/skills/ai-usage-dashboard-skills"
+  ]
+}
