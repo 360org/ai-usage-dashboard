@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# DevTrack post-commit: append CHANGELOGS, tick task.md, cập nhật MAP từ commit
+# vừa tạo. Tuyệt đối không làm vỡ trải nghiệm (luôn exit 0).
+set -uo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=/dev/null
+source "$DIR/_common.sh"
+
+DT="$(find_devtrack)" || exit 0
+PY="$(devtrack_python)"; [ -z "$PY" ] && exit 0
+
+"$PY" "$DT" record || true
+exit 0

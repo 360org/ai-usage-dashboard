@@ -60,6 +60,7 @@ struct PreferencesView: View {
     let runProviderLoginFlow: @MainActor (UsageProvider) async -> Void
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage(SettingsPane.sidebarWidthDefaultsKey) private var sidebarWidth: Double = SettingsPane.sidebarWidth
+    @State private var isFullScreen = false
 
     /// The persisted width, guarded against out-of-range values (edited defaults,
     /// bounds that shrank in an update) so a bad stored value can't wreck the layout.
@@ -124,9 +125,13 @@ struct PreferencesView: View {
             minHeight: SettingsPane.windowMinHeight,
             idealHeight: SettingsPane.windowHeight,
             maxHeight: .infinity)
+        .ignoresSafeArea(self.isFullScreen ? .container : [], edges: .top)
         .id(self.settings.appLanguage)
         .background {
-            SettingsWindowAppearanceBridge(colorScheme: self.colorScheme, windowTitle: self.selection.pane.title)
+            SettingsWindowAppearanceBridge(
+                colorScheme: self.colorScheme,
+                windowTitle: self.selection.pane.title,
+                isFullScreen: self.$isFullScreen)
                 .allowsHitTesting(false)
         }
         .onAppear {
@@ -259,12 +264,14 @@ enum SettingsWindowAppearance {
 struct SettingsWindowAppearanceBridge: NSViewRepresentable {
     let colorScheme: ColorScheme
     let windowTitle: String
+    @Binding var isFullScreen: Bool
 
     func makeNSView(context: Context) -> SettingsWindowAppearanceView {
-        SettingsWindowAppearanceView()
+        SettingsWindowAppearanceView(isFullScreen: self.$isFullScreen)
     }
 
     func updateNSView(_ nsView: SettingsWindowAppearanceView, context: Context) {
+        nsView.isFullScreen = self.$isFullScreen
         nsView.refreshWindowAppearance(for: self.colorScheme, windowTitle: self.windowTitle)
     }
 }
@@ -274,8 +281,13 @@ final class SettingsWindowAppearanceView: NSView {
     private let scheduleReset: SettingsWindowAppearance.ResetScheduler
     private var colorScheme: ColorScheme?
     private var windowTitle: String?
+    var isFullScreen: Binding<Bool>
 
-    init(scheduleReset: @escaping SettingsWindowAppearance.ResetScheduler = SettingsWindowAppearance.scheduleReset) {
+    init(
+        isFullScreen: Binding<Bool>,
+        scheduleReset: @escaping SettingsWindowAppearance.ResetScheduler = SettingsWindowAppearance.scheduleReset
+    ) {
+        self.isFullScreen = isFullScreen
         self.scheduleReset = scheduleReset
         super.init(frame: .zero)
     }
@@ -292,19 +304,52 @@ final class SettingsWindowAppearanceView: NSView {
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         NotificationCenter.default.removeObserver(self, name: NSWindow.didUpdateNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSWindow.didEnterFullScreenNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSWindow.didExitFullScreenNotification, object: nil)
         if let window {
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(self.windowDidUpdate(_:)),
                 name: NSWindow.didUpdateNotification,
                 object: window)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.windowDidEnterFullScreen(_:)),
+                name: NSWindow.didEnterFullScreenNotification,
+                object: window)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.windowDidExitFullScreen(_:)),
+                name: NSWindow.didExitFullScreenNotification,
+                object: window)
         }
+        self.updateFullScreenState()
         self.configureWindowStyle()
         self.refreshWindowAppearance()
     }
 
     @objc private func windowDidUpdate(_ notification: Notification) {
+        self.updateFullScreenState()
         self.configureWindowStyle()
+    }
+
+    @objc private func windowDidEnterFullScreen(_ notification: Notification) {
+        self.isFullScreen.wrappedValue = true
+        self.configureWindowStyle()
+    }
+
+    @objc private func windowDidExitFullScreen(_ notification: Notification) {
+        self.isFullScreen.wrappedValue = false
+        self.configureWindowStyle()
+    }
+
+    private func updateFullScreenState() {
+        if let window {
+            let isFS = window.styleMask.contains(.fullScreen)
+            if self.isFullScreen.wrappedValue != isFS {
+                self.isFullScreen.wrappedValue = isFS
+            }
+        }
     }
 
     func refreshWindowAppearance(for colorScheme: ColorScheme, windowTitle: String? = nil) {

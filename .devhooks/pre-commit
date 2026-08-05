@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# DevTrack pre-commit: kiểm docs bắt buộc + lint nhẹ. Soft mặc định (không chặn);
+# đặt DEVTRACK_STRICT=1 để enforce. Thiếu tool/python → no-op, không chặn commit.
+set -euo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=/dev/null
+source "$DIR/_common.sh"
+
+DT="$(find_devtrack)" || exit 0
+PY="$(devtrack_python)"; [ -z "$PY" ] && exit 0
+
+exec "$PY" "$DT" validate

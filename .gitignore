@@ -45,3 +45,7 @@ docs/.astro/
 # Swift Package Manager metadata (leave sources tracked)
 # Packages/
 # Package.resolved
+
+# DevTrack private scripts for GitLab (ignored by default for GitHub Public)
+.devhooks/
+

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# DevTrack prepare-commit-msg: nếu message trống (không -m, không template), chèn
+# scaffold conventional-commit + gợi ý task-id để agent điền. Không đụng vào các
+# commit đã có message (merge, -m, squash…).
+set -euo pipefail
+MSG_FILE="$1"
+SOURCE="${2:-}"
+
+# Chỉ scaffold khi không có nguồn message (soạn mới trong editor).
+case "$SOURCE" in
+  message|template|merge|squash|commit) exit 0 ;;
+esac
+
+# Nếu đã có nội dung thực (bỏ dòng comment) thì thôi.
+if grep -qvE '^\s*#' "$MSG_FILE" 2>/dev/null && \
+   [ -n "$(grep -vE '^\s*#' "$MSG_FILE" | tr -d '[:space:]')" ]; then
+  exit 0
+fi
+
+cat > "$MSG_FILE" <<'EOF'
+
+# DevTrack: gõ theo Conventional Commits — type(scope): subject (≤50 ký tự)
+# type: feat|fix|docs|refactor|test|chore
+# Tham chiếu task để auto-tick task.md, ví dụ đặt trong subject hoặc body: T1.2
+#
+# Ví dụ:  feat(auth): thêm đăng nhập OTP  T2.1
+EOF
+exit 0
