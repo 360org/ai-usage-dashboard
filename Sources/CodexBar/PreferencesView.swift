@@ -311,7 +311,8 @@ final class SettingsWindowAppearanceView: NSView {
 
     init(
         isFullScreen: Binding<Bool>,
-        scheduleReset: @escaping SettingsWindowAppearance.ResetScheduler = SettingsWindowAppearance.scheduleReset
+        scheduleReset: @escaping SettingsWindowAppearance.ResetScheduler =
+            SettingsWindowAppearance.scheduleReset
     ) {
         self.isFullScreen = isFullScreen
         self.scheduleReset = scheduleReset
