@@ -463,22 +463,29 @@ jobs:
         run: |
           ARCHES="arm64 x86_64" ./Scripts/package_app.sh
 
-      - name: Compress App
+      - name: Compress App (ZIP & DMG)
         id: pkg_app
         shell: bash
         run: |
           set -euo pipefail
           SAFE_REF_NAME="${RELEASE_TAG//\//-}"
           APP_ZIP="AI-Usage-Dashboard-${SAFE_REF_NAME}-macOS-Universal.zip"
+          APP_DMG="AI-Usage-Dashboard-${SAFE_REF_NAME}-macOS-Universal.dmg"
+
           zip -r "$APP_ZIP" "AI Usage Dashboard.app"
+          ./Scripts/create_dmg.sh "AI Usage Dashboard.app" "$APP_DMG" "AI Usage Dashboard"
+
           if command -v sha256sum >/dev/null 2>&1; then
             sha256sum "$APP_ZIP" > "$APP_ZIP.sha256"
+            sha256sum "$APP_DMG" > "$APP_DMG.sha256"
           else
             shasum -a 256 "$APP_ZIP" > "$APP_ZIP.sha256"
+            shasum -a 256 "$APP_DMG" > "$APP_DMG.sha256"
           fi
           echo "app_zip=$APP_ZIP" >> "$GITHUB_OUTPUT"
+          echo "app_dmg=$APP_DMG" >> "$GITHUB_OUTPUT"
 
-      - name: Upload release assets (macOS App)
+      - name: Upload release assets (macOS App ZIP & DMG)
         if: github.event_name == 'release'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -487,7 +494,8 @@ jobs:
           set -euo pipefail
           TAG="${RELEASE_TAG}"
           APP_ZIP="${{ steps.pkg_app.outputs.app_zip }}"
-          gh release upload "$TAG" "$APP_ZIP" "$APP_ZIP.sha256" --clobber
+          APP_DMG="${{ steps.pkg_app.outputs.app_dmg }}"
+          gh release upload "$TAG" "$APP_ZIP" "$APP_ZIP.sha256" "$APP_DMG" "$APP_DMG.sha256" --clobber
 
       - name: Upload workflow artifact (manual runs)
         if: github.event_name == 'workflow_dispatch'
@@ -497,3 +505,5 @@ jobs:
           path: |
             ${{ steps.pkg_app.outputs.app_zip }}
             ${{ steps.pkg_app.outputs.app_zip }}.sha256
+            ${{ steps.pkg_app.outputs.app_dmg }}
+            ${{ steps.pkg_app.outputs.app_dmg }}.sha256
