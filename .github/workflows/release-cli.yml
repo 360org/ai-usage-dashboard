@@ -1,4 +1,4 @@
-name: Release CLI
+name: Release
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag/version to package for manual artifact builds; manual runs do not publish."
+        description: "Release tag/version to package for manual artifact builds"
         required: false
         type: string
 
@@ -381,8 +381,10 @@ jobs:
 
           BIN_DIR="${{ steps.build.outputs.bin_dir }}"
           OUT_DIR="$(mktemp -d)"
-          install -m 0755 "$BIN_DIR/CodexBarCLI" "$OUT_DIR/CodexBarCLI"
-          ln -s "CodexBarCLI" "$OUT_DIR/codexbar"
+          install -m 0755 "$BIN_DIR/CodexBarCLI" "$OUT_DIR/ai-usage-dashboard"
+          ln -s "ai-usage-dashboard" "$OUT_DIR/CodexBarCLI"
+          ln -s "ai-usage-dashboard" "$OUT_DIR/codexbar"
+          ln -s "ai-usage-dashboard" "$OUT_DIR/aiusage"
           printf '%s\n' "${SAFE_REF_NAME#v}" > "$OUT_DIR/VERSION"
 
           CORE_RESOURCE_SOURCE=""
@@ -400,15 +402,15 @@ jobs:
           fi
           cp -R "$CORE_RESOURCE_SOURCE" "$OUT_DIR/CodexBar_CodexBarCore.bundle"
           DIRECT_RESOURCE_SMOKE_OUTPUT="$RUNNER_TEMP/codexbar-cli-resource-smoke-direct-${{ matrix.name }}.txt"
-          CODEXBAR_RESOURCE_SMOKE=1 "$OUT_DIR/CodexBarCLI" > "$DIRECT_RESOURCE_SMOKE_OUTPUT"
+          CODEXBAR_RESOURCE_SMOKE=1 "$OUT_DIR/ai-usage-dashboard" > "$DIRECT_RESOURCE_SMOKE_OUTPUT"
           grep -Fx "CODEXBAR_RESOURCE_SMOKE_OK" "$DIRECT_RESOURCE_SMOKE_OUTPUT"
           SYMLINK_RESOURCE_SMOKE_OUTPUT="$RUNNER_TEMP/codexbar-cli-resource-smoke-symlink-${{ matrix.name }}.txt"
           CODEXBAR_RESOURCE_SMOKE=1 "$OUT_DIR/codexbar" > "$SYMLINK_RESOURCE_SMOKE_OUTPUT"
           grep -Fx "CODEXBAR_RESOURCE_SMOKE_OK" "$SYMLINK_RESOURCE_SMOKE_OUTPUT"
 
-          ASSET="CodexBarCLI-${SAFE_REF_NAME}-${{ matrix.asset-platform }}-${{ matrix.asset-arch }}.tar.gz"
+          ASSET="AI-Usage-Dashboard-CLI-${SAFE_REF_NAME}-${{ matrix.asset-platform }}-${{ matrix.asset-arch }}.tar.gz"
           (cd "$OUT_DIR" && tar czf "$ASSET" \
-            CodexBarCLI codexbar VERSION CodexBar_CodexBarCore.bundle)
+            ai-usage-dashboard CodexBarCLI codexbar aiusage VERSION CodexBar_CodexBarCore.bundle)
           if command -v sha256sum >/dev/null 2>&1; then
             sha256sum "$OUT_DIR/$ASSET" > "$OUT_DIR/$ASSET.sha256"
           else
@@ -434,73 +436,64 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: codexbar-cli-${{ matrix.name }}
+          name: ai-usage-dashboard-cli-${{ matrix.name }}
           path: |
             ${{ steps.pkg.outputs.out_dir }}/${{ steps.pkg.outputs.asset }}
             ${{ steps.pkg.outputs.out_dir }}/${{ steps.pkg.outputs.asset }}.sha256
 
-  update-homebrew-tap:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 80
-    needs: build-cli
-    if: github.event_name == 'release'
+  build-macos-app:
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Resolve release tag
-        id: release
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        shell: bash
+      - name: Select Xcode
         run: |
-          set -euo pipefail
-          tag="${RELEASE_TAG}"
-          if [[ -z "$tag" ]]; then
-            echo "Missing release tag." >&2
-            exit 1
-          fi
-          if [[ ! "$tag" =~ ^v[0-9A-Za-z._-]+$ ]]; then
-            echo "Invalid release tag: $tag" >&2
-            exit 1
-          fi
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "request_id=codexbar-${tag}-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
-
-      - name: Dispatch tap update
-        env:
-          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          RELEASE_TAG: ${{ steps.release.outputs.tag }}
-          REQUEST_ID: ${{ steps.release.outputs.request_id }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -n "$GH_TOKEN"
-          for attempt in {1..6}; do
-            if gh workflow run update-formula.yml \
-              --repo steipete/homebrew-tap \
-              -f formula=codexbar \
-              -f tag="$RELEASE_TAG" \
-              -f repository=steipete/CodexBar \
-              -f artifact_template='CodexBarCLI-{tag}-{target}.tar.gz' \
-              -f target_aliases='darwin_arm64=macos-arm64,darwin_amd64=macos-x86_64,linux_arm64=linux-aarch64,linux_amd64=linux-x86_64' \
-              -f cask=codexbar \
-              -f cask_artifact='CodexBar-macos-universal-{version}.zip' \
-              -f request_id="$REQUEST_ID"; then
-              exit 0
+          for candidate in /Applications/Xcode_26.3.app /Applications/Xcode_26.2.app /Applications/Xcode.app; do
+            if [[ -d "$candidate" ]]; then
+              sudo xcode-select -s "${candidate}/Contents/Developer"
+              break
             fi
-            if [[ "$attempt" -eq 6 ]]; then
-              echo "Failed to dispatch tap update after ${attempt} attempts." >&2
-              exit 1
-            fi
-            sleep $((attempt * 30))
           done
+          /usr/bin/xcodebuild -version
 
-      - name: Wait for tap update
-        timeout-minutes: 70
-        env:
-          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          REQUEST_ID: ${{ steps.release.outputs.request_id }}
-          RELEASE_TAG: ${{ steps.release.outputs.tag }}
-          TAP_WAIT_TIMEOUT_SECONDS: "3900"
+      - name: Build and Package App (Universal)
+        run: |
+          ARCHES="arm64 x86_64" ./Scripts/package_app.sh
+
+      - name: Compress App
+        id: pkg_app
         shell: bash
-        run: ./Scripts/wait_for_homebrew_tap_update.sh
+        run: |
+          set -euo pipefail
+          SAFE_REF_NAME="${RELEASE_TAG//\//-}"
+          APP_ZIP="AI-Usage-Dashboard-${SAFE_REF_NAME}-macOS-Universal.zip"
+          zip -r "$APP_ZIP" "AI Usage Dashboard.app"
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "$APP_ZIP" > "$APP_ZIP.sha256"
+          else
+            shasum -a 256 "$APP_ZIP" > "$APP_ZIP.sha256"
+          fi
+          echo "app_zip=$APP_ZIP" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release assets (macOS App)
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${RELEASE_TAG}"
+          APP_ZIP="${{ steps.pkg_app.outputs.app_zip }}"
+          gh release upload "$TAG" "$APP_ZIP" "$APP_ZIP.sha256" --clobber
+
+      - name: Upload workflow artifact (manual runs)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: AI-Usage-Dashboard-macOS-Universal
+          path: |
+            ${{ steps.pkg_app.outputs.app_zip }}
+            ${{ steps.pkg_app.outputs.app_zip }}.sha256
