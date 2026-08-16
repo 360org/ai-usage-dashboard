@@ -2083,3 +2083,6 @@
 - Configurable refresh cadence, manual refresh, and About links.
 - Async off-main log parsing for responsiveness; strict-concurrency build flags enabled.
 - Packaging + signing/notarization scripts (arm64); build scripts convert `.icon` bundle to `.icns`.
+
+## [Unreleased]
+- 2026-08-16 merge: integrate GitLab initial commit (unrelated histories) [dd0683661]
