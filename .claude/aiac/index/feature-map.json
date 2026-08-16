@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "note": "Feature map dẫn xuất từ symbol/domain signal. Agent cập nhật thủ công sau thay đổi có ý nghĩa.",
+  "hotspots": [
+    {
+      "file": "docs/site.js",
+      "signals": 39
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "signals": 29
+    },
+    {
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "signals": 16
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "signals": 15
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "signals": 9
+    },
+    {
+      "file": "Scripts/mimo-usage.py",
+      "signals": 7
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js",
+      "signals": 5
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/zai.js",
+      "signals": 5
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/clawrouter.js",
+      "signals": 3
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/openrouter.js",
+      "signals": 3
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/poe.js",
+      "signals": 3
+    },
+    {
+      "file": "Sources/CodexBarCore/Resources/Plugins/crof.js",
+      "signals": 1
+    }
+  ]
+}

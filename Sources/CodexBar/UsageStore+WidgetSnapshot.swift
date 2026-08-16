@@ -64,6 +64,7 @@ extension UsageStore {
         }
     }
 
+    /// Builds outbound snapshots only from this Mac's UsageStore; remote fleet snapshots live in CloudSyncState.
     func cloudSyncAccountSnapshots() -> [AccountSnapshotSyncPayload] {
         let deviceID = self.settings.iCloudSyncDeviceID
         var payloads: [String: AccountSnapshotSyncPayload] = [:]
@@ -119,12 +120,14 @@ extension UsageStore {
     }
 
     func cloudSyncLocalAccountKeys(for provider: UsageProvider) -> Set<String> {
-        var identities: Set<String> = []
+        let snapshotKeys = self.cloudSyncAccountSnapshots().filter { $0.provider == provider.instanceID }
+            .map(\.accountKey)
+        var identities = Set(snapshotKeys)
+        var hasDefaultCodexSnapshot = false
         func insert(_ identity: String?) {
             guard let identity else { return }
             identities.insert(AccountSnapshotSyncPayload.accountKey(for: identity))
         }
-
         if let usage = self.snapshots[provider.instanceID] {
             insert(usage.identity?.accountID ?? usage.identity?.accountEmail)
         }
@@ -138,6 +141,7 @@ extension UsageStore {
             insert(account.externalIdentifier)
             insert(account.id.uuidString)
         }
+        // Provider-specific by design: Claude swap subprocesses own extra IDs; Codex alone has scoped account info.
         if provider == .claude {
             for accountSnapshot in self.claudeSwapAccountSnapshots {
                 insert(accountSnapshot.snapshot?.identity?.accountID)
@@ -145,17 +149,18 @@ extension UsageStore {
                 insert("\(accountSnapshot.id.source):\(accountSnapshot.id.opaqueID)")
             }
         }
-        if provider == .codex,
-           let projection = self.settings.codexVisibleAccountProjectionForMenuDisplay
-        {
-            for account in projection.visibleAccounts {
-                insert(account.workspaceAccountID)
-                insert(account.email)
-                insert(account.id)
-                insert(account.storedAccountID?.uuidString)
+        if provider == .codex {
+            if let projection = self.settings.codexVisibleAccountProjectionForMenuDisplay {
+                for account in projection.visibleAccounts {
+                    insert(account.workspaceAccountID)
+                    insert(account.email)
+                    insert(account.id)
+                    insert(account.storedAccountID?.uuidString)
+                }
             }
+            hasDefaultCodexSnapshot = snapshotKeys.contains(AccountSnapshotSyncPayload.accountKey(for: nil))
         }
-        if identities.isEmpty {
+        if identities.isEmpty || hasDefaultCodexSnapshot {
             let fallback = self.accountInfo(for: provider)
             insert(fallback.email)
         }
@@ -409,11 +414,11 @@ extension UsageStore {
 
         let primaryTitle: String = {
             // Legacy request-based Cursor plans track a request quota, not the token-based "Total" pool.
-            if provider == .cursor, snapshot.cursorRequests != nil {
+            if provider == .cursor, snapshot.detailRow(label: "Request quota") != nil {
                 return "Requests"
             }
             if provider == .grok,
-               let dyn = GrokProviderDescriptor.primaryLabel(window: snapshot.primary)
+               let dyn = GrokProviderDescriptor.displayLabel(window: snapshot.primary)
             {
                 return dyn
             }
@@ -423,7 +428,7 @@ extension UsageStore {
                 return dyn
             }
             if provider == .amp,
-               let dyn = AmpProviderDescriptor.primaryLabel(details: snapshot.ampUsage)
+               let dyn = AmpProviderDescriptor.primaryLabel(snapshot: snapshot)
             {
                 return dyn
             }
@@ -438,7 +443,7 @@ extension UsageStore {
             return metadata?.sessionLabel ?? "Session"
         }()
         let secondaryTitle = if provider == .amp {
-            AmpProviderDescriptor.secondaryLabel(details: snapshot.ampUsage) ?? metadata?.weeklyLabel ?? "Weekly"
+            AmpProviderDescriptor.secondaryLabel(snapshot: snapshot) ?? metadata?.weeklyLabel ?? "Weekly"
         } else if provider == .alibabatokenplan {
             AlibabaTokenPlanProviderDescriptor.secondaryLabel(window: snapshot.secondary) ??
                 metadata?.weeklyLabel ?? "Weekly"
@@ -488,7 +493,9 @@ extension UsageStore {
         }), !windows.isEmpty else {
             return nil
         }
-        return windows.map { namedWindow in
+        // Match the menu card and drop model families the account never touches.
+        let idleIDs = AntigravityQuotaFamilyVisibility.idleWindowIDs(in: snapshot)
+        return windows.filter { !idleIDs.contains($0.id) }.map { namedWindow in
             WidgetSnapshot.WidgetUsageRowSnapshot(
                 id: namedWindow.id,
                 title: namedWindow.title,

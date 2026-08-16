@@ -1,0 +1,23 @@
+{
+  "Scripts/ci_swift_test_by_suite.py": "36b0bcc1799feceba677803773606c1b5dffef6996227e1d7c162261531e9983",
+  "Scripts/mimo-usage.py": "cb2b707493eb5dc3b1d56f7c5466eadd212b71e5d840a2d450063dc16417a7b8",
+  "Sources/CodexBarCore/Resources/Plugins/clawrouter.js": "d36930fafd4a093ecdd0432d89f20e4e9eef9347298bc645f6f4fad846651bf8",
+  "Sources/CodexBarCore/Resources/Plugins/crof.js": "ffc8c4db65cfd272707a7bb1bb60cf8cdd6cb4480e0b86755b99d95b25c3d513",
+  "Sources/CodexBarCore/Resources/Plugins/deepgram.js": "ce08e88f19648b11bd6723a02534476e67917dbab9f2b83aaa41c0517bc2e9e2",
+  "Sources/CodexBarCore/Resources/Plugins/manus.js": "362bf7aa1ead97bca0dcc3bd0d5f934d75fca48a94b21cc5604f2181d3c611ce",
+  "Sources/CodexBarCore/Resources/Plugins/openai.js": "c2f25349f8a1d1af5fb8cc9a25d00a7bd991be7592e16fb6f560617a0265a44a",
+  "Sources/CodexBarCore/Resources/Plugins/openrouter.js": "36bb4f15434da6aeaa1aaa2520f5da67fdfeda2cecafe909e557046268db4b49",
+  "Sources/CodexBarCore/Resources/Plugins/perplexity.js": "ab772ceadf8a55e06cd84f91f6d09c852084c89237664f0fb1884845619c6b4b",
+  "Sources/CodexBarCore/Resources/Plugins/poe.js": "6ab45ace4ba5d01162fd7c7b9bfa4e89167178c8610a596a8f8e947a23dbc3e0",
+  "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js": "dec885f2b9ccdc07816038d66c3b468701bfb7c9f2c0f0389f29993032dde360",
+  "Sources/CodexBarCore/Resources/Plugins/qoder.js": "16b0444e1bfb73b5efa08f4c45c025891b74f95368328e81df2c838d84c68e78",
+  "Sources/CodexBarCore/Resources/Plugins/sub2api.js": "18e15f602a88302bca0fabe24f307016527f22f6f16934bd285df7465051a133",
+  "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js": "4d997e15b72cbc9ccf6e743c30c6eb48bf4533f6709852367b40766be5eba70b",
+  "Sources/CodexBarCore/Resources/Plugins/synthetic.js": "40e1147d152604ef3a7dbbf021543437a9895dfae2c875ad5eb90d55a746ffc5",
+  "Sources/CodexBarCore/Resources/Plugins/t3chat.js": "01859d28b24e8513ee2205553ee9a11f768350d7f8a8cd2c4a282a07718a9da5",
+  "Sources/CodexBarCore/Resources/Plugins/venice.js": "da1865df8c6f397d4f00027eac31004d0fb98b82dd9feaf5fd0992275d2dd868",
+  "Sources/CodexBarCore/Resources/Plugins/xai.js": "0db1f63d99185ad728f5ac5a56d7946fda103fc39508b4ad2a3d68a7ff2d9339",
+  "Sources/CodexBarCore/Resources/Plugins/zai.js": "ac3d41f18c13e232cd8d7a57bdb7554306a904b6d0363cf22500a2b8189f0e08",
+  "appcast.xml": "dd71d0f624b29952588f47150babb453df7e5825d4e2aa6de60a6844f812b095",
+  "docs/site.js": "86db56dc6fce43c6010da3f13f2f646446b0bfbc4c17c14c344139d56e0f2d30"
+}

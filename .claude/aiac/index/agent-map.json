@@ -1,0 +1,967 @@
+{
+  "schemaVersion": 1,
+  "root": "/Volumes/DATA/ENV/ai-usage-dashboard/intelligent-benz-d357a0",
+  "files": 21,
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "TestSelection",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 18,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "RunStats",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 25,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "parse_args",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 64,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "run_command",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 83,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "swift_test_list",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 99,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "append_github_summary",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 147,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "print_timing_summary",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 162,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "chunks",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 168,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "shard_groups",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 173,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "prioritized_suites",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 185,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "filtered_suites_for_environment",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 192,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "filter_for",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 205,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "run_group",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 209,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "retry_selections_individually",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 216,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "main",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 232,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "summary_rows",
+      "file": "Scripts/ci_swift_test_by_suite.py",
+      "line": 42,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "parse_session_usage",
+      "file": "Scripts/mimo-usage.py",
+      "line": 29,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "aggregate_usage",
+      "file": "Scripts/mimo-usage.py",
+      "line": 72,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "write_cache",
+      "file": "Scripts/mimo-usage.py",
+      "line": 147,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "fmt_tokens",
+      "file": "Scripts/mimo-usage.py",
+      "line": 163,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "short_status",
+      "file": "Scripts/mimo-usage.py",
+      "line": 171,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "human_summary",
+      "file": "Scripts/mimo-usage.py",
+      "line": 178,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "main",
+      "file": "Scripts/mimo-usage.py",
+      "line": 218,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "integer",
+      "file": "Sources/CodexBarCore/Resources/Plugins/clawrouter.js",
+      "line": 27,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "micros",
+      "file": "Sources/CodexBarCore/Resources/Plugins/clawrouter.js",
+      "line": 31,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "monthlyReset",
+      "file": "Sources/CodexBarCore/Resources/Plugins/clawrouter.js",
+      "line": 35,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "optionalNumber",
+      "file": "Sources/CodexBarCore/Resources/Plugins/crof.js",
+      "line": 26,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "finite",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 18,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "integer",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 24,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "name",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 30,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "usd",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 33,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "numberText",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 36,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "queryURL",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 39,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "ranges",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 51,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "pages",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 65,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "bucket",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openai.js",
+      "line": 96,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "finite",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openrouter.js",
+      "line": 25,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "resetWindowUsage",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openrouter.js",
+      "line": 45,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "keyUsedForQuota",
+      "file": "Sources/CodexBarCore/Resources/Plugins/openrouter.js",
+      "line": 56,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "optionalNumber",
+      "file": "Sources/CodexBarCore/Resources/Plugins/poe.js",
+      "line": 26,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "compact",
+      "file": "Sources/CodexBarCore/Resources/Plugins/poe.js",
+      "line": 32,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "entryDate",
+      "file": "Sources/CodexBarCore/Resources/Plugins/poe.js",
+      "line": 37,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "applyProviderPluginPrelude",
+      "file": "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js",
+      "line": 1,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "parseDate",
+      "file": "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js",
+      "line": 78,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "zonedParts",
+      "file": "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js",
+      "line": 84,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "zonedEpoch",
+      "file": "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js",
+      "line": 102,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "decodeBase64URL",
+      "file": "Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js",
+      "line": 112,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "e",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 2,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "wc",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 2,
+      "domain": "generic"
+    },
+    {
+      "kind": "component",
+      "name": "G",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 2,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "Ni",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 3,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "Ri",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 4,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "Fp",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 6,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "e",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 8,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "Di",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 8,
+      "domain": "generic"
+    },
+    {
+      "kind": "component",
+      "name": "Me",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 8,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "interopRequireWildcard",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 12,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "interopRequireDefault",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 29,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "createNamedExportFrom",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 33,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "createStarExport",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 37,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "nullishCoalesce",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 48,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "asyncNullishCoalesce",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 56,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "optionalChain",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 64,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "asyncOptionalChain",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 86,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "optionalChainDelete",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 108,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "asyncOptionalChainDelete",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 113,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "e",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 117,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "eu",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 117,
+      "domain": "generic"
+    },
+    {
+      "kind": "component",
+      "name": "Wi",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 117,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "extends",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 119,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "uo",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 119,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "extends",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 133,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "Ek",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 133,
+      "domain": "generic"
+    },
+    {
+      "kind": "class",
+      "name": "name",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 135,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "e",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 136,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "R",
+      "file": "Sources/CodexBarCore/Resources/Plugins/sucrase-3.35.1.min.js",
+      "line": 137,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "stringValue",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 53,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "numberValue",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 59,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "firstString",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 68,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "firstNumber",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 76,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "parseDate",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 84,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "firstDate",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 96,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "normalizedPercent",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 105,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "currencyValue",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 110,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "firstCurrency",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 118,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "windowMinutes",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 126,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "windowDescription",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 145,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "isQuota",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 158,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "parseQuota",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 164,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "namedQuota",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 210,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "collect",
+      "file": "Sources/CodexBarCore/Resources/Plugins/synthetic.js",
+      "line": 215,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "find",
+      "file": "Sources/CodexBarCore/Resources/Plugins/t3chat.js",
+      "line": 18,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "optionalNumber",
+      "file": "Sources/CodexBarCore/Resources/Plugins/venice.js",
+      "line": 30,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "optionalInteger",
+      "file": "Sources/CodexBarCore/Resources/Plugins/zai.js",
+      "line": 37,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "parseLimit",
+      "file": "Sources/CodexBarCore/Resources/Plugins/zai.js",
+      "line": 42,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "window",
+      "file": "Sources/CodexBarCore/Resources/Plugins/zai.js",
+      "line": 67,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "limitRow",
+      "file": "Sources/CodexBarCore/Resources/Plugins/zai.js",
+      "line": 82,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "modelUsage",
+      "file": "Sources/CodexBarCore/Resources/Plugins/zai.js",
+      "line": 119,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getMenubarComputed",
+      "file": "docs/site.js",
+      "line": 37,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getMenubarRenderedHeightPx",
+      "file": "docs/site.js",
+      "line": 58,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getPanelBasePx",
+      "file": "docs/site.js",
+      "line": 63,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "artboardPxToTopPercent",
+      "file": "docs/site.js",
+      "line": 80,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "artboardPxToRightPercent",
+      "file": "docs/site.js",
+      "line": 84,
+      "domain": "generic"
+    },
+    {
+      "kind": "component",
+      "name": "HERO_PANEL_CORRECTION",
+      "file": "docs/site.js",
+      "line": 91,
+      "domain": "generic"
+    },
+    {
+      "kind": "component",
+      "name": "HERO_PANEL_TABLET_CORRECTION",
+      "file": "docs/site.js",
+      "line": 101,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getPanelComputed",
+      "file": "docs/site.js",
+      "line": 109,
+      "domain": "generic"
+    },
+    {
+      "kind": "component",
+      "name": "HERO_PANEL_MOBILE_CORRECTION",
+      "file": "docs/site.js",
+      "line": 127,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getMobilePanelComputed",
+      "file": "docs/site.js",
+      "line": 137,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getTabletPanelComputed",
+      "file": "docs/site.js",
+      "line": 149,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getHudDefaultsFromGeometry",
+      "file": "docs/site.js",
+      "line": 161,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "readRootPx",
+      "file": "docs/site.js",
+      "line": 200,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "computeTabletStageHeight",
+      "file": "docs/site.js",
+      "line": 212,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getHeroFluidFactor",
+      "file": "docs/site.js",
+      "line": 229,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getMockupBaseWidth",
+      "file": "docs/site.js",
+      "line": 233,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "readRootNumber",
+      "file": "docs/site.js",
+      "line": 238,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "readRootPercent",
+      "file": "docs/site.js",
+      "line": 244,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getMockupEffectiveScale",
+      "file": "docs/site.js",
+      "line": 255,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "computeMockupX",
+      "file": "docs/site.js",
+      "line": 265,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "getMobileStageWidth",
+      "file": "docs/site.js",
+      "line": 273,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "computeMobileMockupOffsetX",
+      "file": "docs/site.js",
+      "line": 277,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "applyHudGeometryDefaults",
+      "file": "docs/site.js",
+      "line": 286,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "clearHeroDesktopLayout",
+      "file": "docs/site.js",
+      "line": 296,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "applyHeroDesktopLayout",
+      "file": "docs/site.js",
+      "line": 300,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "applyThemePreference",
+      "file": "docs/site.js",
+      "line": 343,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "updateThemeToggleLabel",
+      "file": "docs/site.js",
+      "line": 361,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "normalizeLocale",
+      "file": "docs/site.js",
+      "line": 427,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "selectedLocale",
+      "file": "docs/site.js",
+      "line": 434,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "message",
+      "file": "docs/site.js",
+      "line": 452,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "applyAttributeMessages",
+      "file": "docs/site.js",
+      "line": 456,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "richToken",
+      "file": "docs/site.js",
+      "line": 462,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "renderRichMessage",
+      "file": "docs/site.js",
+      "line": 505,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "applyLanguageMessages",
+      "file": "docs/site.js",
+      "line": 520,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "renderLanguageMenu",
+      "file": "docs/site.js",
+      "line": 540,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "updateLanguageUi",
+      "file": "docs/site.js",
+      "line": 561,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "setLanguageMenuOpen",
+      "file": "docs/site.js",
+      "line": 573,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "selectLanguage",
+      "file": "docs/site.js",
+      "line": 583,
+      "domain": "generic"
+    },
+    {
+      "kind": "function",
+      "name": "copyBrewCommand",
+      "file": "docs/site.js",
+      "line": 716,
+      "domain": "generic"
+    }
+  ],
+  "domainSignals": []
+}
