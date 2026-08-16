@@ -2085,6 +2085,7 @@
 - Packaging + signing/notarization scripts (arm64); build scripts convert `.icon` bundle to `.icns`.
 
 ## [Unreleased]
+- 2026-08-16 feat(release): bổ sung script đóng gói và upload file .dmg cho macOS [0a200c62c]
 - 2026-08-16 ci: đổi tên release artifacts sang AI-Usage-Dashboard và thêm job build macOS App [b27e92612]
 - 2026-08-16 chore: cập nhật agent-map và codegraph sau upstream merge [b5fca77e7]
 - 2026-08-16 ci: tăng timeout build-macos-app lên 60 phút cho universal build [61f686df0]
