@@ -576,9 +576,9 @@ jobs:
           done
           /usr/bin/xcodebuild -version
 
-      - name: Build and Package App
+      - name: Build and Package App (Universal)
         run: |
-          ./Scripts/package_app.sh
+          ARCHES="arm64 x86_64" ./Scripts/package_app.sh
 
       - name: Compress App
         run: |
