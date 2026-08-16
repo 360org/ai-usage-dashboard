@@ -1,6 +1,6 @@
 ### 360 Agent Map
 
-- Nguồn: 21 tệp; 137 symbol; 0 tín hiệu domain.
+- Nguồn: 26 tệp; 155 symbol; 0 tín hiệu domain.
 - Mục tiêu: chọn đúng file/symbol trước khi đọc sâu; chống viết trùng/viết thừa.
 - Quy tắc: đọc map trước; nếu cần flow/impact/caller/callee hoặc bug fail lần 3 thì dùng 360-codegraph.
 
@@ -13,13 +13,13 @@
 - `Scripts/ci_swift_test_by_suite.py` — 16 tín hiệu
 - `Sources/CodexBarCore/Resources/Plugins/synthetic.js` — 15 tín hiệu
 - `Sources/CodexBarCore/Resources/Plugins/openai.js` — 9 tín hiệu
+- `Sources/CodexBarCore/Resources/Plugins/zai.js` — 8 tín hiệu
 - `Scripts/mimo-usage.py` — 7 tín hiệu
-- `Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js` — 5 tín hiệu
-- `Sources/CodexBarCore/Resources/Plugins/zai.js` — 5 tín hiệu
-- `Sources/CodexBarCore/Resources/Plugins/clawrouter.js` — 3 tín hiệu
-- `Sources/CodexBarCore/Resources/Plugins/openrouter.js` — 3 tín hiệu
-- `Sources/CodexBarCore/Resources/Plugins/poe.js` — 3 tín hiệu
-- `Sources/CodexBarCore/Resources/Plugins/crof.js` — 1 tín hiệu
+- `Sources/CodexBarCore/Resources/Plugins/deepgram.js` — 5 tín hiệu
+- `Sources/CodexBarCore/Resources/Plugins/poe.js` — 5 tín hiệu
+- `Sources/CodexBarCore/Resources/Plugins/sub2api.js` — 5 tín hiệu
+- `Sources/CodexBarCore/Resources/Plugins/openrouter.js` — 4 tín hiệu
+- `Sources/CodexBarCore/Resources/Plugins/provider-plugin-prelude.js` — 4 tín hiệu
 
 #### Symbol mẫu
 - `TestSelection` (class) — `Scripts/ci_swift_test_by_suite.py:18`
@@ -45,10 +45,10 @@
 - `short_status` (function) — `Scripts/mimo-usage.py:171`
 - `human_summary` (function) — `Scripts/mimo-usage.py:178`
 - `main` (function) — `Scripts/mimo-usage.py:218`
-- `integer` (function) — `Sources/CodexBarCore/Resources/Plugins/clawrouter.js:27`
-- `micros` (function) — `Sources/CodexBarCore/Resources/Plugins/clawrouter.js:31`
-- `monthlyReset` (function) — `Sources/CodexBarCore/Resources/Plugins/clawrouter.js:35`
+- `integer` (function) — `Sources/CodexBarCore/Resources/Plugins/clawrouter.js:48`
+- `micros` (function) — `Sources/CodexBarCore/Resources/Plugins/clawrouter.js:54`
+- `monthlyReset` (function) — `Sources/CodexBarCore/Resources/Plugins/clawrouter.js:58`
+- `_optionalChain` (function) — `Sources/CodexBarCore/Resources/Plugins/clinepass.js:1`
+- `defineProvider` (function) — `Sources/CodexBarCore/Resources/Plugins/codexbar-plugin.d.ts:179`
 - `optionalNumber` (function) — `Sources/CodexBarCore/Resources/Plugins/crof.js:26`
-- `finite` (function) — `Sources/CodexBarCore/Resources/Plugins/openai.js:18`
-- `integer` (function) — `Sources/CodexBarCore/Resources/Plugins/openai.js:24`
-- `name` (function) — `Sources/CodexBarCore/Resources/Plugins/openai.js:30`
+- `optionalNumber` (function) — `Sources/CodexBarCore/Resources/Plugins/crof.ts:32`
